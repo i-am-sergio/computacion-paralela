@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX 10000 // Matrix size
+const int MAX = 1000; // Matrix size
 double A[MAX][MAX], x[MAX], y[MAX]; // Matrix and vectors
 
 /*
-    * This function initializes the matrix A and vectors x and y with random values
+* This function initializes the matrix A and vectors x and y with random values
 */
 void initialize() {
     for (int i = 0; i < MAX; i++) {
@@ -19,8 +19,8 @@ void initialize() {
 }
 
 /*
-    * This function calculates the matrix-vector product using the first pair of loops
-    * The first loop iterates over the rows of the matrix and the second loop iterates over the columns
+* This function calculates the matrix-vector product using the first pair of loops
+* The first loop iterates over the rows of the matrix and the second loop iterates over the columns
 */
 void first_loop() {
     for (int i = 0; i < MAX; i++) {
@@ -31,8 +31,8 @@ void first_loop() {
 }
 
 /*
-    * This function calculates the matrix-vector product using the second pair of loops
-    * The first loop iterates over the columns of the matrix and the second loop iterates over the rows
+* This function calculates the matrix-vector product using the second pair of loops
+* The first loop iterates over the columns of the matrix and the second loop iterates over the rows
 */
 void second_loop() {
     for (int j = 0; j < MAX; j++) {
@@ -43,10 +43,10 @@ void second_loop() {
 }
 
 int main() {
-    clock_t start, end;
-    double cpu_time_used;
+    clock_t start, end; // Variables to measure time
+    double cpu_time_used; // Variable to store the time
 
-    initialize();
+    initialize(); // Initialize matrix and vectors
 
     // First pair of loops
     start = clock();
