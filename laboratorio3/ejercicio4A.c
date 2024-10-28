@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     localSum = rank + 1; // Ejemplo: sumar el rango + 1
 
     // Comprobar si el número de procesos es potencia de dos
-    if (commSize & (commSize - 1)) {
+    if (commSize & (commSize - 1)) {// Si el número de procesos no es potencia de dos
         if (rank == 0) {
             printf("El número de procesos no es una potencia de dos.\n");
         }
@@ -25,11 +25,11 @@ int main(int argc, char* argv[]) {
     }
 
     // Algoritmo Butterfly
-    for (numIterations = 0; (1 << numIterations) < commSize; numIterations++) {
-        int partner = rank ^ (1 << numIterations); // Calcular el compañero
+    for (numIterations = 0; (1 << numIterations) < commSize; numIterations++) { // Mientras el paso sea menor al tamaño del comunicador
+        int partner = rank ^ (1 << numIterations); // Calcular el compañero con la operacion XOR
 
         // Enviar y recibir el valor de la suma local
-        if (partner < commSize) {
+        if (partner < commSize) { // si el partner calculado es menor al tamaño del comunicador
             long long receivedValue;
             // Enviar la suma local al compañero
             MPI_Send(&localSum, 1, MPI_LONG_LONG, partner, 0, MPI_COMM_WORLD);

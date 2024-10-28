@@ -17,12 +17,16 @@ int main(int argc, char* argv[]) {
 
     // Algoritmo Butterfly
     for (numIterations = 0; (1 << numIterations) < commSize; numIterations++) {
-        int partner = rank ^ (1 << numIterations); // Calcular el compañero
+        // Calcular el compañero
+        int partner = rank ^ (1 << numIterations); // rank = 0001 
+                                                    //       1000 = 1001  
 
         // Comprobar si el compañero está en el rango
         if (partner < commSize) {
             long long receivedValue;
+            // Enviar la suma local al compañero
             MPI_Send(&localSum, 1, MPI_LONG_LONG, partner, 0, MPI_COMM_WORLD);
+            // Recibir el valor de la suma local del compañero
             MPI_Recv(&receivedValue, 1, MPI_LONG_LONG, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             localSum += receivedValue; // Sumar el valor recibido
         }

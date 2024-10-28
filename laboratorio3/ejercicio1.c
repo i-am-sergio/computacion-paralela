@@ -1,3 +1,4 @@
+// Ejercicio 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
@@ -79,6 +80,7 @@ int main(int argc, char *argv[]) {
     if (rank != 0) {
         maximosBins = (float *)malloc(numBins * sizeof(float));
     }
+    // Distribuir los valores máximos de los bins a todos los procesos
     MPI_Bcast(maximosBins, numBins, MPI_FLOAT, 0, MPI_COMM_WORLD);
 
     printf("Proceso %d: recibió parámetros del histograma (min, max, bins).\n", rank);
@@ -103,6 +105,7 @@ int main(int argc, char *argv[]) {
         printf("Proceso %d: calculó desplazamientos y cuentas para Scatterv.\n", rank);
     }
 
+    // Distribuir los datos a todos los procesos
     MPI_Scatterv(datos, cuentas, desplazamientos, MPI_FLOAT, datosLocal, cuentaLocal, MPI_FLOAT, 0, MPI_COMM_WORLD);
     printf("Proceso %d: recibió sus datos locales (total %d datos).\n", rank, cuentaLocal);
 

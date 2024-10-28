@@ -5,30 +5,34 @@
 int main(int argc, char *argv[]) {
     int rank, totalProcesses;
     long long localValue, globalSum;
-    
+
     // Inicialización de MPI
     MPI_Init(&argc, &argv);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Obtener el rank: identificador único de cada proceso
-    MPI_Comm_size(MPI_COMM_WORLD, &totalProcesses); // Obtener el número total de procesos
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &totalProcesses);
 
     // Inicializar el valor local para cada proceso
-    localValue = rank + 1; // Por ejemplo, cada proceso tiene un valor igual a su rango + 1
+    localValue = rank + 1;
     printf("Proceso %d: valor local inicial = %lld\n", rank, localValue);
 
-    // Suma global estructurada en árbol (suponiendo que totalProcesses es una potencia de dos)
+    // Suma global estructurada en árbol
     int step = 1;
-    while (step < totalProcesses) {
-        if (rank % (2 * step) == 0) {
-            // Proceso par
-            long long receivedValue;
-            MPI_Recv(&receivedValue, 1, MPI_LONG_LONG, rank + step, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            localValue += receivedValue; // Sumar el valor recibido
-            printf("Proceso %d: recibió %lld de proceso %d, nueva suma local = %lld\n", rank, receivedValue, rank + step, localValue);
+    while (step < totalProcesses) { // Mientras el paso sea menor al total de procesos
+        if (rank % (2 * step) == 0) { 
+            // Si es par entonces recibe el valor de otro proceso 
+            if (rank + step < totalProcesses) { // Verificar que el rango es válido
+                long long receivedValue;
+                MPI_Recv(&receivedValue, 1, MPI_LONG_LONG, rank + step, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                localValue += receivedValue;
+                printf("Proceso %d: recibió %lld de proceso %d, nueva suma local = %lld\n", rank, receivedValue, rank + step, localValue);
+            }
         } else if (rank % (2 * step) == step) {
-            // Proceso impar
-            MPI_Send(&localValue, 1, MPI_LONG_LONG, rank - step, 0, MPI_COMM_WORLD);
-            printf("Proceso %d: envió %lld a proceso %d\n", rank, localValue, rank - step);
-            break; // Salir del ciclo ya que no es necesario continuar
+            // Si es impar entonces envía el valor a otro proceso
+            if (rank - step >= 0) { // Verificar que el rango es válido
+                MPI_Send(&localValue, 1, MPI_LONG_LONG, rank - step, 0, MPI_COMM_WORLD);
+                printf("Proceso %d: envió %lld a proceso %d\n", rank, localValue, rank - step);
+            }
+            break; // Salir del ciclo
         }
         step *= 2; // Duplicar el paso
     }
